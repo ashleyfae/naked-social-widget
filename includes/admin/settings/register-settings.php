@@ -1,6 +1,8 @@
 <?php
 /**
- *Register Settings
+ * Register Settings
+ *
+ * Taken from Easy Digital Downloads
  *
  * @package   naked-social-widget
  * @copyright Copyright (c) 2016, Nose Graze Ltd.
