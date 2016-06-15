@@ -1,0 +1,7 @@
+{
+"version": 3,
+"mappings": "AAIA,0BAA2B,CACvB,kBAAkB,CAAE,UAAU,CAC9B,eAAe,CAAE,UAAU,CAC3B,UAAU,CAAE,UAAU,CACtB,aAAa,CAAE,IAAI,CAEnB,6BAAG,CACC,OAAO,CAAE,SAAS,CAGtB,gCAAM,CACF,SAAS,CAAE,IAAI,CAIvB,8BAA+B,CAC3B,KAAK,CAAE,IAAI",
+"sources": ["admin.scss"],
+"names": [],
+"file": "admin.min.css"
+}
