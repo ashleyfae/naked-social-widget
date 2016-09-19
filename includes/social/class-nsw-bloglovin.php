@@ -10,6 +10,15 @@
 class NSW_Bloglovin extends Naked_Social_Widget_Site {
 
 	/**
+	 * Profile is URL-based
+	 *
+	 * @var string
+	 * @access public
+	 * @since  1.0
+	 */
+	public $profile_type = 'url';
+
+	/**
 	 * Set API URL
 	 *
 	 * @access public
@@ -56,6 +65,12 @@ class NSW_Bloglovin extends Naked_Social_Widget_Site {
 		$this->followers = $body->followers;
 
 		return $body->followers;
+
+	}
+
+	public function get_profile_url( $username ) {
+
+
 
 	}
 

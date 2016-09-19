@@ -1,0 +1,24 @@
+.naked-social-widget-profile {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+
+    li {
+        display: inline-block;
+        padding: 5px;
+        width: 25%;
+
+        > a {
+            display: block;
+        }
+    }
+
+    span {
+        display: block;
+    }
+
+    .fa {
+        font-size: 18px;
+    }
+}

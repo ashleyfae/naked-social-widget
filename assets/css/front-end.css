@@ -1,0 +1,17 @@
+.naked-social-widget-profile {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  text-align: center; }
+  .naked-social-widget-profile li {
+    display: inline-block;
+    padding: 5px;
+    width: 25%; }
+    .naked-social-widget-profile li > a {
+      display: block; }
+  .naked-social-widget-profile span {
+    display: block; }
+  .naked-social-widget-profile .fa {
+    font-size: 18px; }
+
+/*# sourceMappingURL=front-end.css.map */

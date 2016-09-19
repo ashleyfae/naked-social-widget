@@ -199,6 +199,28 @@ class Naked_Social_Profile {
 	}
 
 	/**
+	 * Get Profile URL
+	 *
+	 * Mapped sites only have a username so we need to build the
+	 * full URL.
+	 *
+	 * @param array $site Array of site data.
+	 *
+	 * @since 1.0
+	 * @return string
+	 */
+	public function get_profile_url( $site ) {
+		$url = $site['profile_url'];
+
+		if ( $site['mapped'] ) {
+			$class_name = 'NSW_' . $site['mapped_value'];
+			$url        = $class_name->get_profile_url( $url );
+		}
+
+		return apply_filters( 'naked-social-widget/profile/get-profile-url', $url, $site );
+	}
+
+	/**
 	 * Display Widget
 	 *
 	 * @access public
@@ -223,12 +245,14 @@ class Naked_Social_Profile {
 			}
 			?>
 			<li class="nsw-<?php echo strtolower( sanitize_html_class( $key ) ); ?> <?php echo ( $site['mapped'] && $this->needs_update ) ? 'nsw-ajax-update' : ''; ?>" data-site="<?php echo array_key_exists( 'mapped_value', $site ) ? esc_attr( $site['mapped_value'] ) : ''; ?>" data-username="<?php echo $site['mapped'] ? esc_attr( $profile_url ) : ''; ?>" data-key="<?php echo esc_attr( $key ); ?>">
-				<?php $this->display_icon( $key ); ?>
-				<span class="nsw-follower-number"><?php echo array_key_exists( $key, $this->follower_counts ) ? esc_html( $this->follower_counts[ $key ] ) : ''; ?></span>
+				<a href="<?php echo esc_url( $this->get_profile_url( $site ) ); ?>" target="_blank">
+					<?php $this->display_icon( $key ); ?>
+					<span class="nsw-follower-number"><?php echo array_key_exists( $key, $this->follower_counts ) ? esc_html( $this->follower_counts[ $key ] ) : ''; ?></span>
 
-				<?php if ( ! empty( $label ) ) : ?>
-					<span class="nsw-follower-label"><?php echo $label; ?></span>
-				<?php endif; ?>
+					<?php if ( ! empty( $label ) ) : ?>
+						<span class="nsw-follower-label"><?php echo $label; ?></span>
+					<?php endif; ?>
+				</a>
 			</li>
 			<?php
 
@@ -250,6 +274,12 @@ class Naked_Social_Profile {
 	 * @return void
 	 */
 	public function display_icon( $key ) {
+
+		if ( $this->plugin_settings['icon_type'] == 'font_awesome' && isset( $this->widget_instance[ $key . '_fa' ] ) ) {
+			?>
+			<i class="fa fa-<?php echo sanitize_html_class( $this->widget_instance[ $key . '_fa' ] ); ?>"></i>
+			<?php
+		}
 
 	}
 

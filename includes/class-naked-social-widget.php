@@ -127,9 +127,9 @@ class Naked_Social_Widget extends WP_Widget {
 			$profile_url    = isset( $instance[ $key . '_profile_url' ] ) ? esc_attr( $instance[ $key . '_profile_url' ] ) : '';
 			$followers      = isset( $instance[ $key . '_followers' ] ) ? esc_attr( $instance[ $key . '_followers' ] ) : '';
 			$follower_label = isset( $instance[ $key . '_label' ] ) ? esc_attr( $instance[ $key . '_label' ] ) : '';
-			$input_type     = $is_mapped ? 'text' : 'url';
+			$input_type     = ( $is_mapped && naked_social_widget_site_class( $site['site'] )->profile_type == 'username' ) ? 'text' : 'url';
 
-			$field_title = $is_mapped ? esc_html__( 'Username', 'naked-social-widget' ) : esc_html__( 'URL', 'naked-social-widget' );
+			$field_title = ( $input_type == 'text' ) ? esc_html__( 'Username', 'naked-social-widget' ) : esc_html__( 'URL', 'naked-social-widget' );
 			?>
 			<p>
 				<label for="<?php echo $this->get_field_id( $key . '_profile_url' ); ?>"><?php printf( '%s %s', $site['name'], $field_title ); ?></label>
@@ -152,11 +152,6 @@ class Naked_Social_Widget extends WP_Widget {
 				<input type="text" class="widefat" id="<?php echo $this->get_field_id( $key . '_label' ); ?>" name="<?php echo $this->get_field_name( $key . '_label' ); ?>" value="<?php echo esc_attr( $follower_label ); ?>">
 			</p>
 			<?php
-
-			// If we're using default icons, continue to next.
-			if ( $naked_social_widget_options['icon_type'] == 'default' ) {
-				continue;
-			}
 
 			// Otherwise, Font Awesome, baby!
 			if ( $naked_social_widget_options['icon_type'] == 'font_awesome' ) {
@@ -193,7 +188,7 @@ class Naked_Social_Widget extends WP_Widget {
 				<input type="hidden" class="widefat naked_social_widget_image_url" name="<?php echo $this->get_field_name( $key . '_icon' ); ?>" id="<?php echo $this->get_field_id( $key . '_icon' ); ?>" value="<?php echo esc_attr( $icon ); ?>">
 
 				<div style="clear: both; overflow: hidden;">
-					<input type="button" value="<?php _e( 'Upload Icon', 'ubb' ); ?>" class="button button-primary naked_social_widget_upload_image_button widefat" id="<?php echo $this->get_field_id( $key . '_icon' ); ?>_upload" style="float: left; width: 48%;" onclick="return naked_social_widget_open_uploader('<?php echo $this->get_field_id( $key . '_icon' ); ?>');">
+					<input type="button" value="<?php _e( 'Upload Icon', 'ubb' ); ?>" class="button naked_social_widget_upload_image_button widefat" id="<?php echo $this->get_field_id( $key . '_icon' ); ?>_upload" style="float: left; width: 48%;" onclick="return naked_social_widget_open_uploader('<?php echo $this->get_field_id( $key . '_icon' ); ?>');">
 					<input type="button" value="<?php _e( 'Remove Icon', 'ubb' ); ?>" class="button naked_social_widget_image_remove_button" id="<?php echo $this->get_field_id( $key . '_icon' ); ?>_remove" style="float: right; width: 48%; <?php echo empty( $icon ) ? 'display: none;' : ''; ?>" onclick="return naked_social_widget_clear_uploader('<?php echo $this->get_field_id( $key . '_icon' ); ?>');">
 				</div>
 			</div>
@@ -246,11 +241,6 @@ class Naked_Social_Widget extends WP_Widget {
 
 				// Update the follower label.
 				$instance[ $key . '_label' ] = isset( $new_instance[ $key . '_label' ] ) ? sanitize_text_field( $new_instance[ $key . '_label' ] ) : '';
-
-				// If we're using default icons, continue to next.
-				if ( $naked_social_widget_options['icon_type'] == 'default' ) {
-					continue;
-				}
 
 				// If we're using Font Awesome, save that.
 				if ( $naked_social_widget_options['icon_type'] == 'font_awesome' ) {

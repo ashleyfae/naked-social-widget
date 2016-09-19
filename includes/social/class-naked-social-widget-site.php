@@ -10,6 +10,15 @@
 class Naked_Social_Widget_Site {
 
 	/**
+	 * Type of username to enter
+	 *
+	 * @var string Should be `username` or `url`
+	 * @access public
+	 * @since  1.0
+	 */
+	public $profile_type = 'username';
+
+	/**
 	 * Name of the option in the wp_options table.
 	 *
 	 * @var string
@@ -52,6 +61,17 @@ class Naked_Social_Widget_Site {
 	/**
 	 * Naked_Social_Widget_Site constructor.
 	 *
+	 * @access public
+	 * @since  1.0
+	 * @return void
+	 */
+	public function __construct() {
+
+	}
+
+	/**
+	 * Setup the Site
+	 *
 	 * @param string $username  Social site username
 	 * @param string $widget_id Widget ID
 	 * @param string $key       Array value in the cache
@@ -60,7 +80,7 @@ class Naked_Social_Widget_Site {
 	 * @since  1.0
 	 * @return void
 	 */
-	public function __construct( $username, $widget_id, $key = '' ) {
+	public function setup( $username, $widget_id, $key = '' ) {
 
 		$this->set_cache_name( $widget_id . '_followers' );
 		$this->set_cache_key( $key );
@@ -152,11 +172,23 @@ class Naked_Social_Widget_Site {
 		$default = array( 'numbers' => array(), 'expires' => false );
 		$cache   = get_option( $this->cache_name );
 		$cache   = is_array( $cache ) ? $cache : $default;
-		
+
 		$cache['numbers'][ $this->cache_key ] = $this->followers;
 
 		update_option( $this->cache_name, $cache );
 
+	}
+
+	/**
+	 * Get Profile URL from Username
+	 *
+	 * @param string $username Site username.
+	 *
+	 * @since 1.0
+	 * @return string Full URL to profile page.
+	 */
+	public function get_profile_url( $username ) {
+		return $username;
 	}
 
 }

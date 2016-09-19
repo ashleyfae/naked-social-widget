@@ -1,11 +1,31 @@
 <?php
 /**
- * functions.php
+ * Misc. Functions
  *
  * @package   naked-social-widget
  * @copyright Copyright (c) 2016, Nose Graze Ltd.
  * @license   GPL2+
  */
+
+/**
+ * Get Site Class
+ *
+ * Returns an instance of a mapped site class.
+ *
+ * @param string $site Name of the site.
+ *
+ * @since 1.0
+ * @return Naked_Social_Widget_Site
+ */
+function naked_social_widget_site_class( $site ) {
+	$class_name = 'NSW_' . $site;
+
+	if ( ! class_exists( $class_name ) ) {
+		$class_name = 'Naked_Social_Widget_Site';
+	}
+
+	return new $class_name;
+}
 
 /**
  * Get Automatically Updating Sites
@@ -60,7 +80,8 @@ function naked_social_widget_update_number() {
 		wp_send_json_error( sprintf( __( 'Class does not exist - %s', 'naked-social-widget' ), esc_html( $class_name ) ) );
 	}
 
-	$site      = new $class_name( $username, $widget_id, $site_key );
+	$site = new $class_name( $username, $widget_id, $site_key );
+	$site->setup();
 	$followers = $site->get_followers();
 
 	if ( ! $followers ) {
