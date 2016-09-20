@@ -33,5 +33,10 @@ TK
 
 == Changelog ==
 
-= 1.0.0 =
+= 0.2 =
+* Scrapped 90% of code.
+* Removed the settings panel. All options are now in the widget.
+* No longer getting any follower numbers automatically.
+
+= 0.1 =
 * Initial release.

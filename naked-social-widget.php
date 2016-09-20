@@ -3,7 +3,7 @@
  * Plugin Name: Naked Social Widget
  * Plugin URI: https://www.nosegraze.com
  * Description: Simple social media profile widget with Font Awesome icons.
- * Version: 1.0
+ * Version: 0.2
  * Author: Nose Graze
  * Author URI: https://www.nosegraze.com
  * License: GPL2
@@ -36,7 +36,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Define constants.
  */
 if ( ! defined( 'NAKED_SOCIAL_WIDGET_VERSION' ) ) {
-	define( 'NAKED_SOCIAL_WIDGET_VERSION', '1.0' );
+	define( 'NAKED_SOCIAL_WIDGET_VERSION', '0.2' );
 }
 if ( ! defined( 'NAKED_SOCIAL_WIDGET_DIR' ) ) {
 	define( 'NAKED_SOCIAL_WIDGET_DIR', plugin_dir_path( __FILE__ ) );
