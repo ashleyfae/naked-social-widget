@@ -8,11 +8,11 @@ Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Show off your number of social media followers.
+Simple social media profile widget with Font Awesome icons.
 
 == Description ==
 
-Simple social media profile widget with follower numbers.
+Simple social media profile widget with Font Awesome icons.
 
 == Installation ==
 

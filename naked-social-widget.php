@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Naked Social Widget
  * Plugin URI: https://www.nosegraze.com
- * Description: Simple social media profile widget.
+ * Description: Simple social media profile widget with Font Awesome icons.
  * Version: 1.0
  * Author: Nose Graze
  * Author URI: https://www.nosegraze.com
@@ -46,9 +46,6 @@ if ( ! defined( 'NAKED_SOCIAL_WIDGET_URL' ) ) {
 }
 if ( ! defined( 'NAKED_SOCIAL_WIDGET_FILE' ) ) {
 	define( 'NAKED_SOCIAL_WIDGET_FILE', __FILE__ );
-}
-if ( ! defined( 'NOSE_GRAZE_STORE_URL' ) ) {
-	define( 'NOSE_GRAZE_STORE_URL', 'https://shop.nosegraze.com' );
 }
 
 /**
