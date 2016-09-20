@@ -1,17 +1,27 @@
-.naked-social-widget-profile {
+.naked-social-widget-sites {
   list-style: none;
   margin: 0;
-  padding: 0;
-  text-align: center; }
-  .naked-social-widget-profile li {
+  padding: 0; }
+  .naked-social-widget-sites.nsw-centered {
+    text-align: center; }
+  .naked-social-widget-sites.nsw-flex {
+    display: flex;
+    flex-flow: row wrap; }
+    .naked-social-widget-sites.nsw-flex li {
+      flex: 1; }
+  .naked-social-widget-sites li {
     display: inline-block;
-    padding: 5px;
-    width: 25%; }
-    .naked-social-widget-profile li > a {
+    padding: 5px; }
+    .naked-social-widget-sites li > a {
       display: block; }
-  .naked-social-widget-profile span {
+  .naked-social-widget-sites span {
     display: block; }
-  .naked-social-widget-profile .fa {
+  .naked-social-widget-sites .fa {
     font-size: 18px; }
+    .naked-social-widget-sites .fa.fa-goodreads:before {
+      content: 'g';
+      font-family: Helvetica, Arial, sans-serif;
+      position: relative;
+      top: -2px; }
 
 /*# sourceMappingURL=front-end.css.map */

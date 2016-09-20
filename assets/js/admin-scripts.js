@@ -1,31 +1,59 @@
 jQuery(document).ready(function ($) {
 
-    var Naked_Social_Widget = {
+    /**
+     * Code from relCopy
+     */
+    nwsAddSite = function (id) {
 
-        /**
-         * Get stuff started.
-         */
-        init: function() {
-            this.init_color_picker();
-            this.clone_repeatable();
-        },
+        var parent = id;
+        var toCopy = $(parent).find('.naked-social-widget-site');
+        var counter = $(toCopy).length;
+        var master = $(parent).find('.naked-social-widget-site:first');
+        var clone = $(master).clone(true);
 
-        /**
-         * Initialize color picker.
-         */
-        init_color_picker : function() {
-            $('.naked-social-widget-color-picker').wpColorPicker();
-        },
-
-        /**
-         * Initialize repeater ("Social Sites" field)
-         */
-        clone_repeatable: function() {
-            $('#naked-social-widget-add-site').relCopy();
+        // Increment Clone IDs
+        if ($(clone).attr('id')) {
+            var newid = $(clone).attr('id') + (counter + 1);
+            $(clone).attr('id', newid);
         }
 
-    };
+        // Increment Clone Children IDs
+        $(clone).find('[id]').each(function () {
+            var newid = $(this).attr('id') + (counter + 1);
+            $(this).attr('id', newid);
+        });
 
-    Naked_Social_Widget.init();
+        //Clear Inputs/Textarea
+        $(clone).find(':input').each(function () {
+            var type = $(this).attr('type');
+            switch (type) {
+                case "button":
+                    break;
+                case "reset":
+                    break;
+                case "submit":
+                    break;
+                case "checkbox":
+                    $(this).attr('checked', '');
+                    break;
+                default:
+                    $(this).val("");
+            }
+
+            $(this).attr("name", function (i, oldVal) {
+                if (!oldVal) {
+                    return false;
+                }
+                return oldVal.replace(/\[sites\]\[(\d+)\]/, function (_, m) {
+                    return "[sites][" + toCopy.length + "]";
+                });
+            });
+        });
+
+        $(parent).find('.naked-social-widget-site:last').after(clone);
+
+        return false;
+
+    };
 
 });

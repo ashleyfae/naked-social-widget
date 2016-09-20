@@ -1,13 +1,24 @@
-.naked-social-widget-profile {
+.naked-social-widget-sites {
     list-style: none;
     margin: 0;
     padding: 0;
-    text-align: center;
+
+    &.nsw-centered {
+        text-align: center;
+    }
+
+    &.nsw-flex {
+        display: flex;
+        flex-flow: row wrap;
+
+        li {
+            flex: 1;
+        }
+    }
 
     li {
         display: inline-block;
         padding: 5px;
-        width: 25%;
 
         > a {
             display: block;
@@ -20,5 +31,14 @@
 
     .fa {
         font-size: 18px;
+
+        &.fa-goodreads {
+            &:before {
+                content: 'g';
+                font-family: Helvetica, Arial, sans-serif;
+                position: relative;
+                top: -2px;
+            }
+        }
     }
 }

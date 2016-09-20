@@ -13,18 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Creates a admin submenu page under 'Settings'.
- *
- * @since 1.0
- * @return void
- */
-function naked_social_widget_add_options_link() {
-	add_options_page( esc_html__( 'Naked Social Widget Settings', 'naked-social-widget' ), esc_html__( 'Naked Social Widget', 'naked-social-widget' ), 'manage_options', 'naked-social-widget', 'naked_social_widget_options_page' );
-}
-
-add_action( 'admin_menu', 'naked_social_widget_add_options_link' );
-
-/**
  * Is Admin Page
  *
  * Checks whether or not the current page is a Naked Social Widget admin page.
@@ -32,13 +20,9 @@ add_action( 'admin_menu', 'naked_social_widget_add_options_link' );
  * @since 1.0
  * @return bool
  */
-function ask_me_anything_is_admin_page() {
+function naked_social_widget_is_admin_page() {
 	$screen      = get_current_screen();
 	$is_nsw_page = false;
-
-	if ( $screen->id == 'settings_page_naked-social-widget' ) {
-		$is_nsw_page = true;
-	}
 
 	if ( $screen->id == 'widgets' ) {
 		$is_nsw_page = true;
@@ -58,7 +42,7 @@ function ask_me_anything_is_admin_page() {
  * @return void
  */
 function naked_social_widget_load_admin_scripts( $hook ) {
-	if ( ! apply_filters( 'naked-social-widget/load-admin-scripts', ask_me_anything_is_admin_page(), $hook ) ) {
+	if ( ! apply_filters( 'naked-social-widget/load-admin-scripts', naked_social_widget_is_admin_page(), $hook ) ) {
 		return;
 	}
 
@@ -69,25 +53,15 @@ function naked_social_widget_load_admin_scripts( $hook ) {
 	$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
 	$admin_deps = array(
-		'jquery',
-		'jquery-ui-sortable',
-		'wp-color-picker'
+		'jquery'
 	);
 
-	wp_enqueue_script( 'recopy', $js_dir . 'jquery.recopy' . $suffix . '.js', array('jquery'), '1.1.0', true );
-	wp_enqueue_script( 'naked-social-widget-admin-scripts', $js_dir . 'admin-scripts' . $suffix . '.js', $admin_deps, NAKED_SOCIAL_WIDGET_VERSION, true );
-
-	$settings = array(
-		'text_remove' => __( 'Remove', 'naked-social-widget' )
-	);
-
-	wp_localize_script( 'naked-social-widget-admin-scripts', 'ASK_ME_ANYTHING', apply_filters( 'naked-social-widget/admin-scripts-settings', $settings ) );
+	wp_enqueue_script( 'naked-social-widget-admin', $js_dir . 'admin-scripts' . $suffix . '.js', $admin_deps, NAKED_SOCIAL_WIDGET_VERSION, true );
 
 	/*
 	 * Stylesheets
 	 */
 	wp_enqueue_style( 'naked-social-widget-admin', $css_dir . 'admin' . $suffix . '.css', NAKED_SOCIAL_WIDGET_VERSION );
-	wp_enqueue_style( 'wp-color-picker' );
 }
 
 add_action( 'admin_enqueue_scripts', 'naked_social_widget_load_admin_scripts', 100 );

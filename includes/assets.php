@@ -27,17 +27,6 @@ function naked_social_widget_load_js() {
 	if ( ! apply_filters( 'naked-social-widget/assets/disable-styles', false ) ) {
 		wp_enqueue_style( 'naked-social-widget', $css_dir . 'front-end' . $suffix . '.css', array(), NAKED_SOCIAL_WIDGET_VERSION );
 	}
-
-	if ( ! apply_filters( 'naked-social-widget/assets/disable-js', false ) ) {
-		wp_enqueue_script( 'naked-social-widget', $js_dir . 'naked-social-widget' . $suffix . '.js', array( 'jquery' ), NAKED_SOCIAL_WIDGET_VERSION, true );
-
-		$settings = array(
-			'ajaxurl' => admin_url( 'admin-ajax.php' ),
-			'nonce'   => wp_create_nonce( 'nsw_update_follower_numbers' )
-		);
-
-		wp_localize_script( 'naked-social-widget', 'NAKED_SOCIAL_WIDGET', $settings );
-	}
 }
 
 add_action( 'wp_enqueue_scripts', 'naked_social_widget_load_js' );

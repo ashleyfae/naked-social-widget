@@ -45,11 +45,70 @@ class Naked_Social_Widget extends WP_Widget {
 			echo $args['before_title'] . apply_filters( 'widget_title', $instance['title'] ) . $args['after_title'];
 		}
 
-		$profile = new Naked_Social_Profile( $instance, $this->id );
+		$classes = array( 'naked-social-widget-sites' );
 
-		echo $profile->display();
+		if ( array_key_exists( 'center_icons', $instance ) && $instance['center_icons'] ) {
+			$classes[] = 'nsw-centered';
+		}
+		if ( array_key_exists( 'format_icons', $instance ) && $instance['format_icons'] ) {
+			$classes[] = 'nsw-flex';
+		}
+
+		$classes = apply_filters( 'naked-social-widget/widget/ul-classes', $classes );
+		$classes = array_map( 'sanitize_html_class', $classes );
+		?>
+		<ul class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>">
+			<?php foreach ( $instance['sites'] as $key => $site ) :
+				if ( empty( $site['url'] ) ) {
+					continue;
+				}
+				?>
+				<li class="nsw-<?php echo esc_attr( $this->sanitize_key( $site['name'] ) ); ?>">
+					<a href="<?php echo esc_url( $site['url'] ); ?>">
+
+						<?php if ( $site['icon'] ) : ?>
+							<i class="fa fa-<?php echo esc_attr( $site['icon'] ); ?>"></i>
+						<?php endif; ?>
+
+						<?php if ( $site['name'] && $instance['hide_site_name'] !== true ) : ?>
+							<span class="nsw-site-name"><?php echo $site['name']; ?></span>
+						<?php endif; ?>
+
+						<?php if ( $site['followers'] ) : ?>
+							<span class="nsw-site-followers"><?php echo $site['followers']; ?></span>
+						<?php endif; ?>
+
+						<?php if ( $site['label'] ) : ?>
+							<span class="nsw-site-label"><?php echo $site['label']; ?></span>
+						<?php endif; ?>
+					</a>
+				</li>
+			<?php endforeach; ?>
+		</ul>
+		<?php
 
 		echo $args['after_widget'];
+
+	}
+
+	/**
+	 * Sanitize Key
+	 *
+	 * Keys are used as internal identifiers. Alphanumeric characters, dashes,
+	 * underscores, stops, colons and slashes are allowed.
+	 *
+	 * @param $key
+	 *
+	 * @access protected
+	 * @since  1.0
+	 * @return string
+	 */
+	protected function sanitize_key( $key ) {
+
+		$raw_key = $key;
+		$key     = preg_replace( '/[^a-zA-Z0-9_\-\.\:\/]/', '', strtolower( $key ) );
+
+		return apply_filters( 'naked-social-widget/sanitize-key', $key, $raw_key );
 
 	}
 
@@ -66,29 +125,36 @@ class Naked_Social_Widget extends WP_Widget {
 	 */
 	public function form( $instance ) {
 
-		global $naked_social_widget_options;
-
 		// Get default values.
 		$defaults = array(
-			'title'        => __( 'Follow Me', 'naked-social-widget' ),
-			'user_id'      => '',
-			'show_numbers' => true,
+			'title'          => __( 'Follow Me', 'naked-social-widget' ),
+			'center_icons'   => true,
+			'format_icons'   => true,
+			'hide_site_name' => true,
+			'sites'          => array(
+				array(
+					'name'      => esc_html__( 'Twitter', 'naked-social-share' ),
+					'site'      => 'Twitter',
+					'url'       => '',
+					'followers' => '',
+					'label'     => esc_html__( 'Followers', 'naked-social-share' ),
+					'icon'      => 'twitter',
+				),
+				array(
+					'name'      => esc_html__( 'RSS', 'naked-social-share' ),
+					'site'      => 'RSS',
+					'url'       => home_url( '/feed/' ),
+					'followers' => '',
+					'label'     => esc_html__( 'Followers', 'naked-social-share' ),
+					'icon'      => 'rss'
+				)
+			)
 		);
 		$instance = wp_parse_args( (array) $instance, $defaults );
-
-		// Args for the user dropdown.
-		$args = array(
-			'selected' => esc_attr( $instance['user_id'] ),
-			'name'     => $this->get_field_name( 'user_id' ),
-			'id'       => $this->get_field_id( 'user_id' ),
-			'class'    => 'widefat',
-		);
 		?>
 		<p><?php printf( __( 'Make sure you configure your settings on the <a href="%s">settings page</a>.', 'naked-social-widget' ), admin_url( 'options-general.php?page=naked-social-widget' ) ); ?></p>
 
-		<?php if ( $naked_social_widget_options['icon_type'] == 'font_awesome' ) : ?>
-			<p><?php printf( __( 'You\'ve selected Font Awesome, which means you need to enter the icon name you want to use for each site. You can get icon names from the <a href="%s">Font Awesome website</a>. Enter in the icon name without the fa fa- class prefix. Example: <mark>twitter-square</mark><br><br> If one of your sites isn\'t supported on Font Awesome, you can upload a custom icon image instead. If you upload an image, that will take priority over anything you add in the text box.', 'naked-social-widget' ), 'http://fortawesome.github.io/Font-Awesome/icons/' ); ?></p>
-		<?php endif; ?>
+		<p><?php printf( __( 'You can get icon names from the <a href="%s">Font Awesome website</a>. Enter in the icon name without the fa fa- class prefix. Example: <mark>twitter-square</mark>', 'naked-social-widget' ), 'http://fortawesome.github.io/Font-Awesome/icons/' ); ?></p>
 
 		<p>
 			<label for="<?php echo esc_attr( $this->get_field_id( 'title' ) ); ?>"><?php esc_html_e( 'Title:', 'naked-social-widget' ); ?></label>
@@ -96,105 +162,70 @@ class Naked_Social_Widget extends WP_Widget {
 		</p>
 
 		<p>
-			<label for="<?php echo $this->get_field_id( 'user_id' ); ?>"><?php _e( 'Select the user that this is for:', 'naked-social-widget' ); ?></label>
-			<?php wp_dropdown_users( $args ); ?>
+			<input id="<?php echo esc_attr( $this->get_field_id( 'center_icons' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'center_icons' ) ); ?>" type="checkbox" value="1" <?php checked( true, $instance['center_icons'] ); ?>>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'center_icons' ) ); ?>"><?php esc_html_e( 'Center Icons', 'naked-social-widget' ); ?></label>
 		</p>
 
 		<p>
-			<input type="checkbox" id="<?php echo $this->get_field_id( 'show_numbers' ); ?>" name="<?php echo $this->get_field_name( 'show_numbers' ); ?>" <?php checked( (bool) $instance['show_numbers'], true ); ?>>
-			<label for="<?php echo $this->get_field_id( 'show_numbers' ); ?>"><?php _e( 'Check to display follower numbers', 'naked-social-widget' ); ?></label>
+			<input id="<?php echo esc_attr( $this->get_field_id( 'format_icons' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'format_icons' ) ); ?>" type="checkbox" value="1" <?php checked( true, $instance['format_icons'] ); ?>>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'format_icons' ) ); ?>"><?php esc_html_e( 'Format icons', 'naked-social-widget' ); ?></label>
 		</p>
 
-		<?php
-		if ( ! is_array( $naked_social_widget_options['social_sites'] ) ) {
-			return;
-		}
+		<p>
+			<input id="<?php echo esc_attr( $this->get_field_id( 'hide_site_name' ) ); ?>" name="<?php echo esc_attr( $this->get_field_name( 'hide_site_name' ) ); ?>" type="checkbox" value="1" <?php checked( true, $instance['hide_site_name'] ); ?>>
+			<label for="<?php echo esc_attr( $this->get_field_id( 'hide_site_name' ) ); ?>"><?php esc_html_e( 'Hide site name', 'naked-social-widget' ); ?></label>
+		</p>
 
-		// Display fields for each social media site.
-		foreach ( $naked_social_widget_options['social_sites'] as $i => $site ) {
-
-			if ( ! array_key_exists( 'name', $site ) ) {
-				continue;
-			}
-
-			$is_mapped = ( array_key_exists( 'site', $site ) && ! empty( $site['site'] ) && array_key_exists( $site['site'], naked_social_widget_get_auto_sites() ) );
-			$key       = naked_social_widget_sanitize_key( $site['name'] . '_' . $i );
-
-			echo '<hr>';
-			echo '<p><strong>' . esc_html( $site['name'] ) . '</strong></p>';
-
-			// Our saved values.
-			$profile_url    = isset( $instance[ $key . '_profile_url' ] ) ? esc_attr( $instance[ $key . '_profile_url' ] ) : '';
-			$followers      = isset( $instance[ $key . '_followers' ] ) ? esc_attr( $instance[ $key . '_followers' ] ) : '';
-			$follower_label = isset( $instance[ $key . '_label' ] ) ? esc_attr( $instance[ $key . '_label' ] ) : '';
-			$input_type     = ( $is_mapped && naked_social_widget_site_class( $site['site'] )->profile_type == 'username' ) ? 'text' : 'url';
-
-			$field_title = ( $input_type == 'text' ) ? esc_html__( 'Username', 'naked-social-widget' ) : esc_html__( 'URL', 'naked-social-widget' );
-			?>
-			<p>
-				<label for="<?php echo $this->get_field_id( $key . '_profile_url' ); ?>"><?php printf( '%s %s', $site['name'], $field_title ); ?></label>
-				<input type="<?php echo $input_type; ?>" class="widefat" id="<?php echo $this->get_field_id( $key . '_profile_url' ); ?>" name="<?php echo $this->get_field_name( $key . '_profile_url' ); ?>" value="<?php echo esc_attr( $profile_url ); ?>" placeholder="<?php echo ! $is_mapped ? 'http://' : ''; ?>">
-			</p>
+		<div id="nsw-<?php echo esc_attr( $this->id ); ?>" class="naked-social-widget-sites">
 			<?php
+			// Display fields for each social media site.
+			foreach ( $instance['sites'] as $i => $site ) {
 
-			// If this isn't a mapped site then include a box for the follower number.
-			if ( ! $is_mapped ) : ?>
-				<p>
-					<label for="<?php echo $this->get_field_id( $key . '_followers' ); ?>"><?php printf( __( 'Number of %s followers', 'naked-social-widget' ), esc_html( $site['name'] ) ); ?></label>
-					<input type="<?php echo $input_type; ?>" class="widefat" id="<?php echo $this->get_field_id( $key . '_followers' ); ?>" name="<?php echo $this->get_field_name( $key . '_followers' ); ?>" value="<?php echo esc_attr( $followers ); ?>">
-				</p>
-			<?php endif;
-
-			// Follower label.
-			?>
-			<p>
-				<label for="<?php echo $this->get_field_id( $key . '_label' ); ?>"><?php _e( 'Label (appears below number)', 'naked-social-widget' ); ?></label>
-				<input type="text" class="widefat" id="<?php echo $this->get_field_id( $key . '_label' ); ?>" name="<?php echo $this->get_field_name( $key . '_label' ); ?>" value="<?php echo esc_attr( $follower_label ); ?>">
-			</p>
-			<?php
-
-			// Otherwise, Font Awesome, baby!
-			if ( $naked_social_widget_options['icon_type'] == 'font_awesome' ) {
-				$fa_icon = isset( $instance[ $key . '_fa' ] ) ? esc_attr( $instance[ $key . '_fa' ] ) : '';
 				?>
-				<p>
-					<label for="<?php echo $this->get_field_id( $key . '_fa' ); ?>"><?php printf( __( '<a href="%s" target="_blank">Font Awesome</a> Icon Name', 'naked-social-widget' ), esc_url( 'http://fortawesome.github.io/Font-Awesome/icons/' ) ); ?></label>
-					<input type="text" class="widefat" id="<?php echo $this->get_field_id( $key . '_fa' ); ?>" name="<?php echo $this->get_field_name( $key . '_fa' ); ?>" value="<?php echo esc_attr( $fa_icon ); ?>" placeholder="twitter">
-				</p>
-				<?php
-			}
+				<div class="naked-social-widget-site">
+					<p>
+						<label for="<?php echo $this->get_field_id( 'sites[' . $i . '][name]' ); ?>"><?php _e( 'Site Name', 'naked-social-widget' ); ?></label>
+						<input type="text" class="widefat" id="<?php echo $this->get_field_id( 'sites[' . $i . '][name]' ); ?>" name="<?php echo $this->get_field_name( 'sites[' . $i . '][name]' ); ?>" value="<?php echo esc_attr( $site['name'] ); ?>">
+					</p>
 
-			// Upload a custom image.
-			$icon        = isset( $instance[ $key . '_icon' ] ) ? $instance[ $key . '_icon' ] : '';
-			$input_label = ( $naked_social_widget_options['icon_type'] == 'font_awesome' ) ? __( 'Icon (if not available on FA):', 'naked-social-widget' ) : __( 'Icon:', 'naked-social-widget' );
-			?>
-			<div id="<?php echo $this->get_field_id( $key . '_icon' ); ?>_wrapper" class="upload_wrapper" style="margin: 1em 0;">
-				<label for="<?php echo $this->get_field_id( $key . '_icon' ); ?>"><?php echo $input_label; ?></label>
-				<br><br>
+					<p>
+						<label for="<?php echo $this->get_field_id( 'sites[' . $i . '][url]' ); ?>"><?php _e( 'Profile URL', 'naked-social-widget' ); ?></label>
+						<input type="url" class="widefat" id="<?php echo $this->get_field_id( 'sites[' . $i . '][url]' ); ?>" name="<?php echo $this->get_field_name( 'sites[' . $i . '][url]' ); ?>" value="<?php echo esc_attr( $site['url'] ); ?>" placeholder="http://">
+					</p>
 
-				<?php
-				if ( ! empty( $icon ) ) {
-					$attr = array(
-						'id'    => $this->get_field_id( $key . '_icon' ) . '_image',
-						'style' => 'margin:0 auto 5px;padding:0;max-width:100%;display:block;height:auto;'
-					);
-					echo wp_get_attachment_image( intval( $icon ), 'full', false, $attr );
-				} else {
-					?>
-					<img id="<?php echo $this->get_field_id( $key . '_icon' ); ?>_image" src="" style="display: none;">
-					<?php
-				}
-				?>
-				<input type="hidden" class="widefat naked_social_widget_image_url" name="<?php echo $this->get_field_name( $key . '_icon' ); ?>" id="<?php echo $this->get_field_id( $key . '_icon' ); ?>" value="<?php echo esc_attr( $icon ); ?>">
+					<p>
+						<label for="<?php echo $this->get_field_id( 'sites[' . $i . '][followers]' ); ?>"><?php _e( 'Number of followers', 'naked-social-widget' ); ?></label>
+						<input type="text" class="widefat" id="<?php echo $this->get_field_id( 'sites[' . $i . '][followers]' ); ?>" name="<?php echo $this->get_field_name( 'sites[' . $i . '][followers]' ); ?>" value="<?php echo esc_attr( $site['followers'] ); ?>">
+					</p>
 
-				<div style="clear: both; overflow: hidden;">
-					<input type="button" value="<?php _e( 'Upload Icon', 'ubb' ); ?>" class="button naked_social_widget_upload_image_button widefat" id="<?php echo $this->get_field_id( $key . '_icon' ); ?>_upload" style="float: left; width: 48%;" onclick="return naked_social_widget_open_uploader('<?php echo $this->get_field_id( $key . '_icon' ); ?>');">
-					<input type="button" value="<?php _e( 'Remove Icon', 'ubb' ); ?>" class="button naked_social_widget_image_remove_button" id="<?php echo $this->get_field_id( $key . '_icon' ); ?>_remove" style="float: right; width: 48%; <?php echo empty( $icon ) ? 'display: none;' : ''; ?>" onclick="return naked_social_widget_clear_uploader('<?php echo $this->get_field_id( $key . '_icon' ); ?>');">
+					<p>
+						<label for="<?php echo $this->get_field_id( 'sites[' . $i . '][label]' ); ?>"><?php _e( 'Label (appears below number)', 'naked-social-widget' ); ?></label>
+						<input type="text" class="widefat" id="<?php echo $this->get_field_id( 'sites[' . $i . '][label]' ); ?>" name="<?php echo $this->get_field_name( 'sites[' . $i . '][label]' ); ?>" value="<?php echo esc_attr( $site['label'] ); ?>">
+					</p>
+
+					<p>
+						<label for="<?php echo $this->get_field_id( 'sites[' . $i . '][icon]' ); ?>"><?php printf( __( '<a href="%s" target="_blank">Font Awesome</a> Icon Name', 'naked-social-widget' ), esc_url( 'http://fortawesome.github.io/Font-Awesome/icons/' ) ); ?></label>
+						<input type="text" class="widefat" id="<?php echo $this->get_field_id( 'sites[' . $i . '][icon]' ); ?>" name="<?php echo $this->get_field_name( 'sites[' . $i . '][icon]' ); ?>" value="<?php echo esc_attr( $site['icon'] ); ?>">
+					</p>
+
+					<div class="nsw-site-actions">
+						<button type="button" class="button" title="<?php esc_attr_e( 'Remove this site', 'naked-social-widget' ); ?>" onclick="jQuery(this).parent().parent().remove(); return false;">
+							<span class="dashicons dashicons-trash"></span>
+						</button>
+					</div>
 				</div>
-			</div>
-			<?php
+				<?php
 
-		}
+			}
+			?>
+		</div>
+
+		<div class="nsw-add-another-site">
+			<button type="button" class="button" title="<?php esc_attr_e( 'Add another site', 'naked-social-widget' ); ?>" onclick="return nwsAddSite('#nsw-<?php echo esc_attr( $this->id ); ?>');">
+				<?php esc_html_e( 'Add Site', 'naked-social-widget' ); ?>
+			</button>
+		</div>
+		<?php
 
 	}
 
@@ -213,51 +244,35 @@ class Naked_Social_Widget extends WP_Widget {
 	 * @return array Updated safe values to be saved.
 	 */
 	public function update( $new_instance, $old_instance ) {
-		global $naked_social_widget_options;
 		$instance = array();
 
-		$instance['title']        = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
-		$instance['user_id']      = absint( $new_instance['user_id'] );
-		$instance['show_numbers'] = strip_tags( $new_instance['show_numbers'] );
+		$instance['title'] = ( ! empty( $new_instance['title'] ) ) ? strip_tags( $new_instance['title'] ) : '';
+		$instance['sites'] = array();
 
-		if ( is_array( $naked_social_widget_options['social_sites'] ) ) {
+		// Save checkboxes
+		foreach ( array( 'center_icons', 'format_icons', 'hide_site_name' ) as $option ) {
+			$instance[ $option ] = isset( $new_instance[ $option ] ) ? true : false;
+		}
 
-			foreach ( $naked_social_widget_options['social_sites'] as $i => $site ) {
-
-				if ( ! array_key_exists( 'name', $site ) ) {
+		// Save sites
+		if ( isset( $new_instance['sites'] ) && is_array( $new_instance['sites'] ) ) {
+			foreach ( $new_instance['sites'] as $key => $options ) {
+				if ( ! is_array( $options ) ) {
 					continue;
 				}
 
-				$is_mapped = ( array_key_exists( 'site', $site ) && ! empty( $site['site'] ) && array_key_exists( $site['site'], naked_social_widget_get_auto_sites() ) );
-				$key       = naked_social_widget_sanitize_key( $site['name'] . '_' . $i );
+				$sanitized_values = array(
+					'name'      => array_key_exists( 'name', $options ) ? sanitize_text_field( $options['name'] ) : '',
+					'site'      => array_key_exists( 'site', $options ) ? wp_strip_all_tags( $options['site'] ) : '',
+					'url'       => ( array_key_exists( 'url', $options ) && $options['url'] ) ? esc_url_raw( $options['url'] ) : '',
+					'followers' => array_key_exists( 'followers', $options ) ? sanitize_text_field( $options['followers'] ) : '',
+					'label'     => array_key_exists( 'label', $options ) ? sanitize_text_field( $options['label'] ) : '',
+					'icon'      => array_key_exists( 'icon', $options ) ? sanitize_html_class( $options['icon'] ) : '',
+				);
 
-				// Update the username/URL.
-				$instance[ $key . '_profile_url' ] = isset( $new_instance[ $key . '_profile_url' ] ) ? trim( strip_tags( $new_instance[ $key . '_profile_url' ] ) ) : '';
-
-				// Update the number of followers.
-				if ( ! $is_mapped ) {
-					$instance[ $key . '_followers' ] = isset( $new_instance[ $key . '_followers' ] ) ? strip_tags( $new_instance[ $key . '_followers' ] ) : 0;
-				}
-
-				// Update the follower label.
-				$instance[ $key . '_label' ] = isset( $new_instance[ $key . '_label' ] ) ? sanitize_text_field( $new_instance[ $key . '_label' ] ) : '';
-
-				// If we're using Font Awesome, save that.
-				if ( $naked_social_widget_options['icon_type'] == 'font_awesome' ) {
-					$icon_name = isset( $new_instance[ $key . '_fa' ] ) ? sanitize_html_class( $new_instance[ $key . '_fa' ] ) : '';
-					// Strip "fa " and "fa-" if they entered those.
-					$instance[ $key . '_fa' ] = str_replace( array( 'fa ', 'fa-' ), '', $icon_name );
-				}
-
-				// Save the custom icon
-				$instance[ $key . '_icon' ] = ( isset( $new_instance[ $key . '_icon' ] ) && is_numeric( $new_instance[ $key . '_icon' ] ) ) ? absint( $new_instance[ $key . '_icon' ] ) : '';
-
+				$instance['sites'][ $key ] = $sanitized_values;
 			}
-
 		}
-
-		// Delete cache.
-		delete_option( 'naked_social_widget_followers_' . absint( $instance['user_id'] ) . '_expiry' );
 
 		return $instance;
 	}
