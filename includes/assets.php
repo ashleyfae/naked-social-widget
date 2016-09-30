@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Load Assets
  *
- * @since 1.0
+ * @since 0.1
  * @return void
  */
 function naked_social_widget_load_js() {

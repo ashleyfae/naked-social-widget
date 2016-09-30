@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Checks whether or not the current page is a Naked Social Widget admin page.
  *
- * @since 1.0
+ * @since 0.1.0
  * @return bool
  */
 function naked_social_widget_is_admin_page() {
@@ -38,7 +38,7 @@ function naked_social_widget_is_admin_page() {
  *
  * @param string $hook Currently loaded page
  *
- * @since 1.0
+ * @since 0.1.0
  * @return void
  */
 function naked_social_widget_load_admin_scripts( $hook ) {

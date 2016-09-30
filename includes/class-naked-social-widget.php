@@ -13,7 +13,7 @@ class Naked_Social_Widget extends WP_Widget {
 	 * Register widget with WordPress.
 	 *
 	 * @access public
-	 * @since  1.0
+	 * @since  0.1.0
 	 * @return void
 	 */
 	public function __construct() {
@@ -33,7 +33,7 @@ class Naked_Social_Widget extends WP_Widget {
 	 * @param array $instance Saved values from database.
 	 *
 	 * @access public
-	 * @since  1.0
+	 * @since  0.1.0
 	 * @return void
 	 */
 	public function widget( $args, $instance ) {
@@ -64,8 +64,7 @@ class Naked_Social_Widget extends WP_Widget {
 				}
 				?>
 				<li class="nsw-<?php echo esc_attr( $this->sanitize_key( $site['name'] ) ); ?>">
-					<a href="<?php echo esc_url( $site['url'] ); ?>">
-
+					<a href="<?php echo esc_url( $site['url'] ); ?>" target="_blank">
 						<?php if ( $site['icon'] ) : ?>
 							<i class="fa fa-<?php echo esc_attr( $site['icon'] ); ?>"></i>
 						<?php endif; ?>
@@ -100,7 +99,7 @@ class Naked_Social_Widget extends WP_Widget {
 	 * @param $key
 	 *
 	 * @access protected
-	 * @since  1.0
+	 * @since  0.1.0
 	 * @return string
 	 */
 	protected function sanitize_key( $key ) {
@@ -120,7 +119,7 @@ class Naked_Social_Widget extends WP_Widget {
 	 * @param array $instance Previously saved values from database.
 	 *
 	 * @access public
-	 * @since  1.0
+	 * @since  0.1.0
 	 * @return void
 	 */
 	public function form( $instance ) {
@@ -240,7 +239,7 @@ class Naked_Social_Widget extends WP_Widget {
 	 * @global array $naked_social_widget_options Plugin settings
 	 *
 	 * @access public
-	 * @since  1.0
+	 * @since  0.1.0
 	 * @return array Updated safe values to be saved.
 	 */
 	public function update( $new_instance, $old_instance ) {
