@@ -35,3 +35,19 @@ function naked_social_widget_load_js() {
 }
 
 add_action( 'wp_enqueue_scripts', 'naked_social_widget_load_js' );
+
+function naked_social_widget_front_end() {
+
+	// Use minified libraries if SCRIPT_DEBUG is turned off
+	$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
+
+	wp_register_script( 'naked-social-widget', NAKED_SOCIAL_WIDGET_URL . 'assets/js/front-end' . $suffix . '.js', array( 'jquery' ), NAKED_SOCIAL_WIDGET_VERSION, true );
+	wp_enqueue_script( 'naked-social-widget' );
+	$settings = array(
+		'ajaxurl' => admin_url( 'admin-ajax.php' )
+	);
+	wp_localize_script( 'naked-social-widget', 'NSW', $settings );
+
+}
+
+add_action( 'wp_enqueue_scripts', 'naked_social_widget_front_end' );
