@@ -73,9 +73,19 @@ class Naked_Social_Widget extends WP_Widget {
 							<span class="nsw-site-name"><?php echo $site['name']; ?></span>
 						<?php endif; ?>
 
-						<?php if ( $site['followers'] ) : ?>
+						<?php
+						if ( $class_name = nsw_is_mapped_site( $site['url'] ) ) {
+							$mapped_site = new $class_name( $site['url'], $this->id );
+							$number      = $mapped_site->get_saved_number();
+							?>
+							<span class="nsw-site-followers<?php echo $mapped_site->is_expired ? ' nsw-update-number' : ''; ?>" data-site="twitter"><?php echo absint( $number ); ?></span>
+							<?php
+						} elseif ( $site['followers'] ) {
+							?>
 							<span class="nsw-site-followers"><?php echo $site['followers']; ?></span>
-						<?php endif; ?>
+							<?php
+						}
+						?>
 
 						<?php if ( $site['label'] ) : ?>
 							<span class="nsw-site-label"><?php echo $site['label']; ?></span>

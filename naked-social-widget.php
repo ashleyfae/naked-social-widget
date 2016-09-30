@@ -78,6 +78,9 @@ if ( version_compare( PHP_VERSION, '5.3', '<' ) ) {
  */
 require_once NAKED_SOCIAL_WIDGET_DIR . 'includes/assets.php';
 require_once NAKED_SOCIAL_WIDGET_DIR . 'includes/class-naked-social-widget.php';
+require_once NAKED_SOCIAL_WIDGET_DIR . 'includes/functions.php';
+require_once NAKED_SOCIAL_WIDGET_DIR . 'includes/sites/class-nsw-site.php';
+require_once NAKED_SOCIAL_WIDGET_DIR . 'includes/sites/class-nsw-twitter.php';
 
 if ( is_admin() ) {
 	require_once NAKED_SOCIAL_WIDGET_DIR . 'includes/admin/admin-pages.php';
