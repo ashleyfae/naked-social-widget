@@ -152,7 +152,6 @@ class Naked_Social_Widget extends WP_Widget {
 		);
 		$instance = wp_parse_args( (array) $instance, $defaults );
 		?>
-		<p><?php printf( __( 'Make sure you configure your settings on the <a href="%s">settings page</a>.', 'naked-social-widget' ), admin_url( 'options-general.php?page=naked-social-widget' ) ); ?></p>
 
 		<p><?php printf( __( 'You can get icon names from the <a href="%s">Font Awesome website</a>. Enter in the icon name without the fa fa- class prefix. Example: <mark>twitter-square</mark>', 'naked-social-widget' ), 'http://fortawesome.github.io/Font-Awesome/icons/' ); ?></p>
 
